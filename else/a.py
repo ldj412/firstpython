@@ -7,41 +7,52 @@
 # gbkTypeStr = unicodeTypeStr.encode("GBK", 'ignore')
 # 在对unicode字符编码时，添加ignore参数，忽略无法编译的字符。
 import math
-from functools import reduce
-import functools
-import sys
-import time
-'a test module'
-from tkinter import * #导入Tkinter包的所有内容
-import tkinter.messagebox as messagebox
-import time
+from multiprocessing import Process
+import os
 
-print('这是第1步')
-def func(n):
-	print('这是第5步')
-	for i in range(0,n):
-		print('这是第6步')
-		print('这是第9步:', i)
-		arg = yield i
-		print('这是第10步age：', arg)
-		print('这是第7步')
-		
-		
-print('这是第2步')
-f = func(10)
-while True:
-	print('这是第3步')
-	print(next(f))
+# 子程序要执行的代码
+"""
+def run_proc(name):
+	print('Run child process %s (%s)...' % (name, os.getpid()))
+
+if __name__=='__main__':
+	print('parent process %s.' % os.getpid())
+	p = Process(target=run_proc, args=('test',))
+	print('child process will start.')
+	p.start()
+	p.join()
+	print('child process end')
+"""
+def consumer():
+	print('这是第1步')
+	r = ''
+	while True:
+		print('这是第2步')
+		n = yield r
+		print('这是第k步')
+		if not n:
+			return
+		print('[CONSUMER] Consuming %s...' % n)
+		r = '200 OK'
+print('这是第3步')
+def produce(c):
 	print('这是第4步')
-	f.send(100)
-	#time.sleep(1)
+	c.send(None)
+	n = 0
+	while n < 5:
+		print('这是第5步')
+		n = n + 1
+		print('[PRODUCER] Producing %s...' % n)
+		r = c.send(n+1)
+		print('这是第6步')
+		print('[PRODUCER] Consumer return: %s' % r)
+	c.close()
+print('这是第7步')
+c = consumer()
 print('这是第8步')
+produce(c)
 
-# 1,2,3
-#next：5,6,9，4
-#send：10,7,6,9，3
-#next：10,7,6，9,4
-#send：10,7,6,9，3
+
 
 
 
